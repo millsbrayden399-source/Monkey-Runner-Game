@@ -17,7 +17,7 @@ class MonkeyRunnerGame {
             height: 60,
             isJumping: false,
             jumpVelocity: 0,
-            jumpPower: 20, // INCREASED JUMP POWER FOR EASIER JUMPING
+            jumpPower: 30, // INCREASED JUMP POWER FOR EASIER JUMPING
             gravity: 0.8
         };
 
