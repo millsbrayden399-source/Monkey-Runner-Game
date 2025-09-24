@@ -189,8 +189,6 @@
         }
         window.addEventListener('load', () => {
             new MonkeyRunnerGame();
-            const previewCanvas = document.getElementById('monkeyPreviewCanvas');
-            if (previewCanvas) { const ctx = previewCanvas.getContext('2d'); const pMonkey = new Monkey(); pMonkey.x = 10; pMonkey.y = 10; pMonkey.draw(ctx); }
         });
     </script>
 </body>
