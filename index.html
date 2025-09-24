@@ -79,3 +79,21 @@
                 </div>
             </div>
             <div id="pauseScreen" class="screen" style="display: none;">
+                <h2>Game Paused</h2>
+                <button id="resumeButton" class="game-button">Resume</button>
+                <button id="quitButton" class="game-button secondary">Quit to Menu</button>
+            </div>
+            <div id="gameOverScreen" class="screen" style="display: none;">
+                <h1>Game Over</h1>
+                <h2 id="crashMessage">You crashed!</h2>
+                <div class="score-display">Your Score: <span id="finalScore">0</span></div>
+                <button id="restartButton" class="game-button">Play Again</button>
+                <button id="menuButton" class="game-button secondary">Main Menu</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const GAME_CONFIG = { GRAVITY: 0.8, INITIAL_SPEED: 5, MAX_SPEED: 15, ACCELERATION: 0.0005, JUMP_POWER: 18, DOUBLE_JUMP_POWER: 15, GROUND_HEIGHT: 320, SLIDE_DURATION: 40, INVINCIBILITY_DURATION: 120 };
+        class AssetManager {
+            constructor() { this.images = {}; this.sounds = {}; this.totalAssets = 0; this.loadedAssets = 0; this.onComplete = null; this.music = null; }
+            loadImage(name, src) { this.totalAssets++; const img = new Image(); img.src = src; img.onload = ()
