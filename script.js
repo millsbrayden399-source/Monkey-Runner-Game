@@ -6,7 +6,7 @@ class MonkeyRunnerGame {
         this.gameState = 'menu'; // menu, playing, gameOver
         this.score = 0;
         this.highScore = parseInt(localStorage.getItem('monkeyRunnerHighScore')) || 0;
-        this.gameSpeed = 2;
+        this.gameSpeed = 2.5;
         this.acceleration = 0.001;
 
         // Game objects
@@ -17,8 +17,8 @@ class MonkeyRunnerGame {
             height: 60,
             isJumping: false,
             jumpVelocity: 0,
-            jumpPower: 30, // INCREASED JUMP POWER FOR EASIER JUMPING
-            gravity: 0.8
+            jumpPower: 24, // INCREASED JUMP POWER FOR EASIER JUMPING
+            gravity: 1.2
         };
 
         this.obstacles = [];
