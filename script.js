@@ -87,10 +87,8 @@ class MonkeyRunnerGame {
 
             if (rand < 0.25) { // Spawn a banana
                 this.bananas.push(new Banana(this.canvas.width, 200 + Math.random() * 80));
-            } else if (rand < 0.65) { // Spawn a log
+            } else { // Always spawn a log
                 this.obstacles.push(new Obstacle(this.canvas.width, 280, 'log'));
-            } else { // Spawn a tree trunk
-                this.obstacles.push(new Obstacle(this.canvas.width, 200, 'tree'));
             }
 
             this.spawnInterval = Math.max(800, this.spawnInterval - 5);
@@ -156,19 +154,15 @@ class MonkeyRunnerGame {
     }
 
     drawBackground() {
-        // Light sky background
         this.ctx.fillStyle = '#87CEEB';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Distant jungle layer
         this.ctx.fillStyle = '#006400';
         drawTrees(this.ctx, this.background.x * 0.2, 100, 50, 4);
 
-        // Mid-layer of jungle foliage
         this.ctx.fillStyle = '#2E8B57';
         drawFoliage(this.ctx, this.background.x * 0.4, 150, 60, 6);
 
-        // Close jungle layer
         this.ctx.fillStyle = '#3CB371';
         drawTrees(this.ctx, this.background.x * 0.6, 200, 70, 8);
     }
@@ -249,7 +243,7 @@ class Monkey {
         this.height = 60;
         this.isJumping = false;
         this.jumpVelocity = 0;
-        this.jumpPower = 15;
+        this.jumpPower = 18; 
         this.gravity = 0.8;
         this.frame = 0;
         this.frameInterval = 5;
@@ -347,15 +341,9 @@ class Obstacle {
         this.x = x;
         this.y = y;
         this.type = type;
-        if (this.type === 'log') {
-            this.width = 80;
-            this.height = 40;
-            this.y = 320 - this.height;
-        } else if (this.type === 'tree') {
-            this.width = 60;
-            this.height = 120;
-            this.y = 320 - this.height;
-        }
+        this.width = 80;
+        this.height = 40;
+        this.y = 320 - this.height; // Always place on the ground
     }
 
     update(speed) {
@@ -363,24 +351,15 @@ class Obstacle {
     }
 
     draw(ctx) {
-        if (this.type === 'log') {
-            ctx.fillStyle = '#8B4513';
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-            ctx.strokeStyle = '#654321';
-            ctx.lineWidth = 2;
-            for (let i = 0; i < 3; i++) {
-                ctx.beginPath();
-                ctx.moveTo(this.x, this.y + 10 + i * 10);
-                ctx.lineTo(this.x + this.width, this.y + 10 + i * 10);
-                ctx.stroke();
-            }
-        } else if (this.type === 'tree') {
-            ctx.fillStyle = '#4a2d1d';
-            ctx.fillRect(this.x + 10, this.y, 40, this.height);
-            ctx.fillStyle = '#228B22';
+        ctx.fillStyle = '#8B4513';
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.strokeStyle = '#654321';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 3; i++) {
             ctx.beginPath();
-            ctx.arc(this.x + this.width / 2, this.y + 20, 30, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.moveTo(this.x, this.y + 10 + i * 10);
+            ctx.lineTo(this.x + this.width, this.y + 10 + i * 10);
+            ctx.stroke();
         }
     }
 }
@@ -440,7 +419,6 @@ class Particle {
     }
 }
 
-// Global functions for background drawing
 function drawTrees(ctx, x, y, size, count) {
     for (let i = 0; i < count; i++) {
         const treeX = (x + i * 200) % (ctx.canvas.width + 50);
@@ -462,7 +440,6 @@ function drawFoliage(ctx, x, y, size, count) {
     ctx.fill();
 }
 
-// Global game instance and control functions
 let game;
 
 function startGame() {
