@@ -3,12 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Monkey Runner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
-        <canvas id="gameCanvas"></canvas>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="gameOverlay">
+            <div id="startScreen">
+                <h1>Monkey Runner</h1>
+                <p>Press Space or Tap to Start</p>
+                <div class="score-display">
+                    <p>High Score: <span id="highScore">0</span></p>
+                </div>
+            </div>
+            <div id="gameOverScreen" style="display: none;">
+                <h2>Game Over!</h2>
+                <p>Final Score: <span id="finalScore">0</span></p>
+                <p id="crashMessage"></p>
+                <p>Press Space or Tap to Play Again</p>
+            </div>
+        </div>
+        <div class="top-ui">
+            <p>Score: <span id="score">0</span></p>
+            <p>High Score: <span id="highScoreTop">0</span></p>
+        </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
