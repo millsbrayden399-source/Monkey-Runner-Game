@@ -29,6 +29,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             border-radius: 8px;
             overflow: hidden;
+            cursor: pointer;
         }
 
         /* Canvas */
@@ -227,6 +228,11 @@
             justify-content: space-between;
             align-items: center;
             z-index: 5;
+            pointer-events: none; /* Allow clicks to pass through to canvas */
+        }
+        
+        .hud .controls button {
+             pointer-events: all; /* Make sure buttons are clickable */
         }
 
         .score-container {
@@ -369,121 +375,3 @@
                             <div class="character-preview space"></div>
                             <p>Space</p>
                         </div>
-                    </div>
-                </div>
-
-                <button id="startButton" class="game-button">Start Game</button>
-                <div class="instructions">
-                    <p>SPACE / Arrow UP / Click: Jump & Double Jump</p>
-                    <p>Arrow DOWN: Slide (under birds)</p>
-                </div>
-            </div>
-
-            <div id="pauseScreen" class="screen" style="display: none;">
-                <h2>Game Paused</h2>
-                <button id="resumeButton" class="game-button">Resume</button>
-                <button id="quitButton" class="game-button secondary">Quit to Menu</button>
-            </div>
-
-            <div id="gameOverScreen" class="screen" style="display: none;">
-                <h1>Game Over</h1>
-                <h2 id="crashMessage">You crashed!</h2>
-                <div class="score-display">
-                    Your Score: <span id="finalScore">0</span>
-                </div>
-                <button id="restartButton" class="game-button">Play Again</button>
-                <button id="menuButton" class="game-button secondary">Main Menu</button>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        /**
-         * Monkey Runner - Enhanced Edition
-         * A web-based endless runner game
-         */
-
-        // Game Constants
-        const GAME_CONFIG = {
-            GRAVITY: 0.8,
-            INITIAL_SPEED: 5,
-            MAX_SPEED: 15,
-            ACCELERATION: 0.0005,
-            JUMP_POWER: 18,
-            DOUBLE_JUMP_POWER: 15,
-            GROUND_HEIGHT: 320,
-            POWER_DRAIN_RATE: 0.2,
-            POWER_GAIN_RATE: 0.5,
-            MAX_POWER: 100,
-            SLIDE_DURATION: 40,
-            INVINCIBILITY_DURATION: 120
-        };
-
-        // Asset Management
-        class AssetManager {
-            constructor() {
-                this.images = {};
-                this.sounds = {};
-                this.totalAssets = 0;
-                this.loadedAssets = 0;
-                this.onComplete = null;
-            }
-
-            loadImage(name, src) {
-                this.totalAssets++;
-                const img = new Image();
-                img.src = src;
-                img.onload = () => this._assetLoaded();
-                img.onerror = () => {
-                    console.error(`Failed to load image: ${src}`);
-                    this._assetLoaded();
-                };
-                this.images[name] = img;
-            }
-
-            loadSound(name, src) {
-                this.totalAssets++;
-                const sound = new Audio(src);
-                sound.oncanplaythrough = () => this._assetLoaded();
-                sound.onerror = () => {
-                    console.error(`Failed to load sound: ${src}`);
-                    this._assetLoaded();
-                };
-                this.sounds[name] = sound;
-            }
-
-            _assetLoaded() {
-                this.loadedAssets++;
-                if (this.loadedAssets === this.totalAssets && this.onComplete) {
-                    this.onComplete();
-                }
-            }
-
-            getImage(name) {
-                return this.images[name];
-            }
-
-            playSound(name, volume = 1.0, loop = false) {
-                if (!this.sounds[name]) return;
-                
-                // Clone the audio to allow multiple instances
-                const sound = this.sounds[name].cloneNode();
-                sound.volume = volume;
-                sound.loop = loop;
-                sound.play().catch(e => console.error("Audio play failed:", e)); // Added error handling for autoplay policies
-                return sound;
-            }
-
-            stopSound(name) {
-                if (this.sounds[name]) {
-                    this.sounds[name].pause();
-                    this.sounds[name].currentTime = 0;
-                }
-            }
-        }
-
-        // Game Engine
-        class MonkeyRunnerGame {
-            constructor() {
-                // Canvas setup
-                this.canvas = document.getElementById('gameCanvas');
