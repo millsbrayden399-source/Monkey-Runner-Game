@@ -12,7 +12,7 @@ class MonkeyRunnerGame {
         // Game objects
         this.monkey = {
             x: 100,
-            y: 250,
+            y: 290,
             width: 60,
             height: 60,
             isJumping: false,
