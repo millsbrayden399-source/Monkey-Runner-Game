@@ -1,30 +1,14 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <title>Monkey Runner</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
     <div class="game-container">
-      <canvas id="gameCanvas"></canvas>
-      <div id="game-info">
-        <p>Score: <span id="score">0</span></p>
-        <p>High Score: <span id="highScore">0</span></p>
-      </div>
-    </div>
-    <div id="gameOverlay">
-      <div id="startScreen">
-        <h1>Monkey Runner</h1>
-        <p>Press Play to begin!</p>
-        <button onclick="startGame()">Play</button>
-      </div>
-      <div id="gameOverScreen" style="display: none">
-        <h2>Game Over!</h2>
-        <p id="crashMessage"></p>
-        <p>Final Score: <span id="finalScore">0</span></p>
-        <button onclick="restartGame()">Play Again</button>
-      </div>
+        <canvas id="gameCanvas"></canvas>
     </div>
     <script src="script.js"></script>
-  </body>
+</body>
 </html>
