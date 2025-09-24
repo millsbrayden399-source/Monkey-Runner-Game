@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monkey Runner</title>
+    <title>Monkey Runner - Enhanced Edition</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #2c3e50; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
@@ -79,23 +79,3 @@
                 </div>
             </div>
             <div id="pauseScreen" class="screen" style="display: none;">
-                <h2>Game Paused</h2>
-                <button id="resumeButton" class="game-button">Resume</button>
-                <button id="quitButton" class="game-button secondary">Quit to Menu</button>
-            </div>
-            <div id="gameOverScreen" class="screen" style="display: none;">
-                <h1>Game Over</h1>
-                <h2 id="crashMessage">You crashed!</h2>
-                <div class="score-display">Your Score: <span id="finalScore">0</span></div>
-                <button id="restartButton" class="game-button">Play Again</button>
-                <button id="menuButton" class="game-button secondary">Main Menu</button>
-            </div>
-        </div>
-    </div>
-    <script>
-        const GAME_CONFIG = { GRAVITY: 0.8, INITIAL_SPEED: 5, MAX_SPEED: 15, ACCELERATION: 0.0005, JUMP_POWER: 18, DOUBLE_JUMP_POWER: 15, GROUND_HEIGHT: 320, SLIDE_DURATION: 40, INVINCIBILITY_DURATION: 120 };
-        class AssetManager {
-            constructor() { this.images = {}; this.sounds = {}; this.totalAssets = 0; this.loadedAssets = 0; this.onComplete = null; this.music = null; }
-            loadImage(name, src) { this.totalAssets++; const img = new Image(); img.src = src; img.onload = () => this._assetLoaded(); img.onerror = () => { console.error(`Failed to load image: ${src}`); this._assetLoaded(); }; this.images[name] = img; }
-            loadSound(name, src) { this.totalAssets++; const sound = new Audio(src); let loaded = false; const onCanPlay = () => { if (!loaded) { loaded = true; this._assetLoaded(); } }; sound.addEventListener('canplaythrough', onCanPlay); sound.addEventListener('error', () => { onCanPlay(); }); setTimeout(() => onCanPlay(), 5000); if (name === 'music') { this.music = sound; } else { this.sounds[name] = sound; } }
-            _assetLoaded()
