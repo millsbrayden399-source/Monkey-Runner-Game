@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monkey Runner - Enhanced Edition</title>
+    <title>Monkey Runner</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #2c3e50; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
@@ -27,7 +27,7 @@
         .character { padding: 10px; border-radius: 8px; border: 2px solid #e67e22; background: rgba(230, 126, 34, 0.2); }
         #monkeyPreviewCanvas { background-color: #f5f5f5; border: 3px solid #ddd; border-radius: 50%; }
         .instructions { margin-top: 15px; padding: 10px; background: rgba(0, 0, 0, 0.05); border-radius: 8px; }
-        .instructions p { margin: 4px 0; color: #555; font-size: 14px; /* Better fix for text cutoff */ }
+        .instructions p { margin: 4px 0; color: #555; font-size: 14px; }
         .hud { position: absolute; top: 0; left: 0; width: 100%; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 5; pointer-events: none; }
         .hud .controls button { pointer-events: all; }
         .score-container { display: flex; align-items: center; gap: 20px; }
@@ -98,21 +98,4 @@
             constructor() { this.images = {}; this.sounds = {}; this.totalAssets = 0; this.loadedAssets = 0; this.onComplete = null; this.music = null; }
             loadImage(name, src) { this.totalAssets++; const img = new Image(); img.src = src; img.onload = () => this._assetLoaded(); img.onerror = () => { console.error(`Failed to load image: ${src}`); this._assetLoaded(); }; this.images[name] = img; }
             loadSound(name, src) { this.totalAssets++; const sound = new Audio(src); let loaded = false; const onCanPlay = () => { if (!loaded) { loaded = true; this._assetLoaded(); } }; sound.addEventListener('canplaythrough', onCanPlay); sound.addEventListener('error', () => { onCanPlay(); }); setTimeout(() => onCanPlay(), 5000); if (name === 'music') { this.music = sound; } else { this.sounds[name] = sound; } }
-            _assetLoaded() { this.loadedAssets++; if (this.loadedAssets >= this.totalAssets && this.onComplete) { this.onComplete(); } }
-            getImage(name) { return this.images[name]; }
-            playSound(name, volume = 1.0) { if (!this.sounds[name]) return; const sound = this.sounds[name].cloneNode(); sound.volume = volume; sound.play().catch(e => {}); }
-            playMusic(volume = 0.3) { if (!this.music) return; this.music.loop = true; this.music.volume = volume; this.music.play().catch(e => console.warn("Music will play after first interaction.")); }
-            stopMusic() { if (this.music) { this.music.pause(); this.music.currentTime = 0; } }
-        }
-        class MonkeyRunnerGame {
-            constructor() { this.canvas = document.getElementById('gameCanvas'); this.ctx = this.canvas.getContext('2d'); this.gameState = 'loading'; this.score = 0; this.highScore = parseInt(localStorage.getItem('monkeyRunnerHighScore')) || 0; this.gameSpeed = GAME_CONFIG.INITIAL_SPEED; this.powerLevel = 0; this.distance = 0; this.monkey = null; this.obstacles = []; this.collectibles = []; this.powerUps = []; this.particles = []; this.background = { layers: [] }; this.lastObstacleSpawn = 0; this.lastCollectibleSpawn = 0; this.lastPowerUpSpawn = 0; this.spawnInterval = 2000; this.assets = new AssetManager(); this.lastTime = 0; this.loadAssets(); this.setupEventListeners(); requestAnimationFrame((t) => this.gameLoop(t)); }
-            loadAssets() {
-                this.assets.loadImage('background1', 'https://i.imgur.com/c5B1i6c.png');
-                this.assets.loadImage('background2', 'https://i.imgur.com/4kC5bNP.png');
-                this.assets.loadImage('background3', 'https://i.imgur.com/fTQ12vL.png');
-                this.assets.loadImage('ground',      'https://i.imgur.com/tC0js0g.png');
-                this.assets.loadSound('jump', 'https://assets.codepen.io/21542/howler-push.mp3');
-                this.assets.loadSound('collect', 'https://assets.codepen.io/21542/howler-sfx-levelup.mp3');
-                this.assets.loadSound('crash', 'https://assets.codepen.io/21542/howler-sfx-lose.mp3');
-                this.assets.loadSound('powerup', 'https://assets.codepen.io/21542/howler-sfx-coin.mp3');
-                this.assets.loadSound('music', '
+            _assetLoaded()
