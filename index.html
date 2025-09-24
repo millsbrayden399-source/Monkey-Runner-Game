@@ -2,34 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Monkey Runner</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <title>Monkey Runner - Enhanced Edition</title>
+    <link rel="stylesheet" href="styles.css">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
 </head>
 <body>
     <div class="game-container">
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <canvas id="gameCanvas" width="800" height="400"></canvas>
+        
         <div id="gameOverlay">
-            <div id="startScreen">
-                <h1>Monkey Runner</h1>
-                <p>Press Space or Tap to Start</p>
-                <div class="score-display">
-                    <p>High Score: <span id="highScore">0</span></p>
+            <div id="startScreen" class="screen">
+                <h1>MONKEY RUNNER</h1>
+                <h2>ENHANCED EDITION</h2>
+                <div class="high-score">HIGH SCORE: <span id="highScoreTop">0</span></div>
+                <div class="character-select">
+                    <h3>SELECT YOUR MONKEY</h3>
+                    <div class="character-options">
+                        <div class="character" data-character="default" data-selected="true">
+                            <div class="character-preview default"></div>
+                            <span>Classic</span>
+                        </div>
+                        <div class="character" data-character="ninja">
+                            <div class="character-preview ninja"></div>
+                            <span>Ninja</span>
+                        </div>
+                        <div class="character" data-character="space">
+                            <div class="character-preview space"></div>
+                            <span>Astro</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="startButton" class="game-button">START GAME</button>
+                <div class="instructions">
+                    <h3>HOW TO PLAY</h3>
+                    <p>Press SPACE, UP ARROW, or TAP to jump</p>
+                    <p>Collect bananas for points</p>
+                    <p>Avoid obstacles</p>
+                    <p>Press DOWN to slide (new!)</p>
                 </div>
             </div>
-            <div id="gameOverScreen" style="display: none;">
-                <h2>Game Over!</h2>
-                <p>Final Score: <span id="finalScore">0</span></p>
-                <p id="crashMessage"></p>
-                <p>Press Space or Tap to Play Again</p>
+            
+            <div id="gameOverScreen" class="screen" style="display: none;">
+                <h1>GAME OVER</h1>
+                <h2 id="crashMessage">You crashed!</h2>
+                <div class="score-display">
+                    <div>SCORE: <span id="finalScore">0</span></div>
+                    <div>HIGH SCORE: <span id="highScore">0</span></div>
+                </div>
+                <button id="restartButton" class="game-button">PLAY AGAIN</button>
+                <button id="menuButton" class="game-button secondary">MAIN MENU</button>
+            </div>
+            
+            <div id="pauseScreen" class="screen" style="display: none;">
+                <h1>PAUSED</h1>
+                <button id="resumeButton" class="game-button">RESUME</button>
+                <button id="quitButton" class="game-button secondary">QUIT GAME</button>
             </div>
         </div>
-        <div class="top-ui">
-            <p>Score: <span id="score">0</span></p>
-            <p>High Score: <span id="highScoreTop">0</span></p>
+        
+        <div class="hud">
+            <div class="score-container">
+                <div class="score">SCORE: <span id="score">0</span></div>
+                <div class="power-meter">
+                    <div class="power-label">POWER:</div>
+                    <div class="power-bar">
+                        <div id="powerFill"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="pauseButton">II</button>
+                <button id="muteButton">🔊</button>
+            </div>
         </div>
     </div>
-
-    <script src="script.js"></script>
+    
+    <script src="game.js"></script>
 </body>
 </html>
