@@ -16,6 +16,7 @@ class MonkeyRunnerGame {
         this.bananas = [];
         this.particles = [];
         this.background = { x: 0 };
+        this.ground = { x: 0 };
 
         // Timing
         this.lastSpawn = 0;
@@ -28,7 +29,7 @@ class MonkeyRunnerGame {
             collect: this.createSound(400, 800),
             crash: this.createSound(100, 50)
         };
-        this.music = new Audio('path/to/your/background-music.mp3'); // Remember to replace with your own file
+        this.music = new Audio('path/to/your/background-music.mp3'); 
         this.music.loop = true;
         this.music.volume = 0.3;
 
@@ -38,19 +39,13 @@ class MonkeyRunnerGame {
     }
 
     setupEventListeners() {
-        // Keyboard controls
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space' || e.code === 'ArrowUp') {
                 e.preventDefault();
-                if (this.gameState === 'playing') {
-                    this.monkey.jump(this.sounds.jump);
-                } else if (this.gameState === 'gameOver' || this.gameState === 'menu') {
-                    this.start();
-                }
+                this.handlePlayerAction();
             }
         });
 
-        // Touch and click controls
         this.canvas.addEventListener('mousedown', () => this.handlePlayerAction());
         this.canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
@@ -92,40 +87,40 @@ class MonkeyRunnerGame {
 
             if (rand < 0.25) { // Spawn a banana
                 this.bananas.push(new Banana(this.canvas.width, 200 + Math.random() * 80));
-            } else if (rand < 0.6) { // Spawn a log
+            } else if (rand < 0.65) { // Spawn a log
                 this.obstacles.push(new Obstacle(this.canvas.width, 280, 'log'));
-            } else { // Spawn a vine
-                this.obstacles.push(new Obstacle(this.canvas.width, 220, 'vine'));
+            } else { // Spawn a tree trunk
+                this.obstacles.push(new Obstacle(this.canvas.width, 200, 'tree'));
             }
 
-            // Increase difficulty
             this.spawnInterval = Math.max(800, this.spawnInterval - 5);
         }
     }
 
     updatePhysics() {
-        // Update game objects
         this.monkey.update();
         this.obstacles.forEach(o => o.update(this.gameSpeed));
         this.bananas.forEach(b => b.update(this.gameSpeed));
         this.particles.forEach(p => p.update());
 
-        // Filter out off-screen objects
         this.obstacles = this.obstacles.filter(o => o.x > -o.width);
         this.bananas = this.bananas.filter(b => b.x > -b.width && !b.collected);
         this.particles = this.particles.filter(p => p.life > 0);
 
-        // Update background
-        this.background.x -= this.gameSpeed * 0.3;
+        this.background.x -= this.gameSpeed * 0.1;
+        this.ground.x -= this.gameSpeed * 1;
+
         if (this.background.x <= -this.canvas.width) {
             this.background.x = 0;
+        }
+        if (this.ground.x <= -this.canvas.width) {
+            this.ground.x = 0;
         }
 
         this.gameSpeed += this.acceleration;
     }
 
     checkCollisions() {
-        // Check banana collection
         this.bananas.forEach(banana => {
             if (!banana.collected && this.isColliding(this.monkey, banana)) {
                 banana.collected = true;
@@ -136,7 +131,6 @@ class MonkeyRunnerGame {
             }
         });
 
-        // Check obstacle collision
         this.obstacles.forEach(obstacle => {
             if (this.isColliding(this.monkey, obstacle)) {
                 this.gameOver('You crashed!');
@@ -162,25 +156,26 @@ class MonkeyRunnerGame {
     }
 
     drawBackground() {
-        this.ctx.fillStyle = '#87CEEB'; // Sky blue
+        // Light sky background
+        this.ctx.fillStyle = '#87CEEB';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        // Draw animated clouds
-        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-        for (let i = 0; i < 3; i++) {
-            const cloudX = (this.background.x + i * 300) % (this.canvas.width + 100);
-            drawCloud(this.ctx, cloudX, 50 + i * 30);
-        }
-        // Draw jungle elements
-        this.ctx.fillStyle = '#228B22';
-        for (let i = 0; i < 5; i++) {
-            const treeX = (this.background.x * 0.5 + i * 200) % (this.canvas.width + 50);
-            drawTree(this.ctx, treeX, 200);
-        }
-    }
 
+        // Distant jungle layer
+        this.ctx.fillStyle = '#006400';
+        drawTrees(this.ctx, this.background.x * 0.2, 100, 50, 4);
+
+        // Mid-layer of jungle foliage
+        this.ctx.fillStyle = '#2E8B57';
+        drawFoliage(this.ctx, this.background.x * 0.4, 150, 60, 6);
+
+        // Close jungle layer
+        this.ctx.fillStyle = '#3CB371';
+        drawTrees(this.ctx, this.background.x * 0.6, 200, 70, 8);
+    }
+    
     drawGround() {
         this.ctx.fillStyle = '#A0522D';
-        this.ctx.fillRect(0, 320, this.canvas.width, this.canvas.height - 320);
+        this.ctx.fillRect(this.ground.x, 320, this.canvas.width * 2, this.canvas.height - 320);
     }
 
     createCollectParticles(x, y) {
@@ -192,6 +187,7 @@ class MonkeyRunnerGame {
     updateUI() {
         document.getElementById('score').textContent = this.score;
         document.getElementById('highScore').textContent = this.highScore;
+        document.getElementById('highScoreTop').textContent = this.highScore;
     }
 
     gameOver(message) {
@@ -236,8 +232,6 @@ class MonkeyRunnerGame {
             this.spawnObject();
             this.updatePhysics();
             this.checkCollisions();
-        } else if (this.gameState === 'menu') {
-            // Display start screen
         }
 
         this.draw();
@@ -267,7 +261,6 @@ class Monkey {
             this.isJumping = true;
             this.jumpVelocity = -this.jumpPower;
             jumpSound();
-            // Note: Particle creation is now handled in the main game class
         }
     }
 
@@ -282,45 +275,63 @@ class Monkey {
                 this.jumpVelocity = 0;
             }
         }
-
-        // Animation frames
         this.frameCount++;
         if (this.frameCount >= this.frameInterval) {
-            this.frame = (this.frame + 1) % 2; // 2 frames for animation
+            this.frame = (this.frame + 1) % 2;
             this.frameCount = 0;
         }
     }
 
     draw(ctx) {
-        // Draw the monkey based on its animation frame
-        ctx.fillStyle = '#D2691E'; // Body color
+        // Body (Ellipse)
+        ctx.fillStyle = '#D2691E'; // Brown body color
         ctx.beginPath();
-        if (this.frame === 0) { // Frame 1: running
-            ctx.fillRect(this.x + 15, this.y + 20, 30, 35);
-            ctx.fillRect(this.x + 5, this.y + 25, 15, 8); // Arm 1
-            ctx.fillRect(this.x + 40, this.y + 25, 15, 8); // Arm 2
-        } else { // Frame 2: other running pose
-            ctx.fillRect(this.x + 15, this.y + 20, 30, 35);
-            ctx.fillRect(this.x + 10, this.y + 30, 15, 8); // Arm 1 (swung back)
-            ctx.fillRect(this.x + 35, this.y + 30, 15, 8); // Arm 2 (swung forward)
-        }
-
-        // Draw the head and legs (common to both frames)
-        ctx.fillStyle = '#DEB887'; // Head color
-        ctx.beginPath();
-        ctx.arc(this.x + 30, this.y + 15, 18, 0, Math.PI * 2);
+        ctx.ellipse(this.x + 30, this.y + 40, 25, 20, Math.PI / 2, 0, Math.PI * 2);
         ctx.fill();
 
+        // Head (Arc)
+        ctx.fillStyle = '#DEB887'; // Lighter head/face color
+        ctx.beginPath();
+        ctx.arc(this.x + 30, this.y + 20, 18, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ears
         ctx.fillStyle = '#D2691E';
-        ctx.fillRect(this.x + 18, this.y + 50, 8, 15);
-        ctx.fillRect(this.x + 34, this.y + 50, 8, 15);
+        ctx.beginPath();
+        ctx.arc(this.x + 15, this.y + 18, 8, 0, Math.PI * 2);
+        ctx.arc(this.x + 45, this.y + 18, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Face
+        ctx.fillStyle = '#DEB887';
+        ctx.beginPath();
+        ctx.arc(this.x + 30, this.y + 25, 12, 0, Math.PI * 2);
+        ctx.fill();
 
         // Eyes
         ctx.fillStyle = '#000';
         ctx.beginPath();
-        ctx.arc(this.x + 25, this.y + 12, 2, 0, Math.PI * 2);
-        ctx.arc(this.x + 35, this.y + 12, 2, 0, Math.PI * 2);
+        ctx.arc(this.x + 25, this.y + 20, 2, 0, Math.PI * 2);
+        ctx.arc(this.x + 35, this.y + 20, 2, 0, Math.PI * 2);
         ctx.fill();
+
+        // Tail
+        ctx.strokeStyle = '#D2691E';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(this.x + 10, this.y + 50);
+        ctx.bezierCurveTo(this.x - 20, this.y + 40, this.x - 30, this.y + 60, this.x, this.y + 70);
+        ctx.stroke();
+
+        // Legs (animated)
+        ctx.fillStyle = '#D2691E';
+        if (this.frame === 0) {
+            ctx.fillRect(this.x + 20, this.y + 55, 8, 15);
+            ctx.fillRect(this.x + 32, this.y + 55, 8, 15);
+        } else {
+            ctx.fillRect(this.x + 20, this.y + 50, 8, 15);
+            ctx.fillRect(this.x + 32, this.y + 60, 8, 15);
+        }
     }
 
     reset() {
@@ -335,9 +346,16 @@ class Obstacle {
     constructor(x, y, type) {
         this.x = x;
         this.y = y;
-        this.width = type === 'log' ? 80 : 40;
-        this.height = type === 'log' ? 40 : 100;
         this.type = type;
+        if (this.type === 'log') {
+            this.width = 80;
+            this.height = 40;
+            this.y = 320 - this.height;
+        } else if (this.type === 'tree') {
+            this.width = 60;
+            this.height = 120;
+            this.y = 320 - this.height;
+        }
     }
 
     update(speed) {
@@ -356,16 +374,13 @@ class Obstacle {
                 ctx.lineTo(this.x + this.width, this.y + 10 + i * 10);
                 ctx.stroke();
             }
-        } else if (this.type === 'vine') {
-            ctx.fillStyle = '#006400';
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-            // Draw leaves
+        } else if (this.type === 'tree') {
+            ctx.fillStyle = '#4a2d1d';
+            ctx.fillRect(this.x + 10, this.y, 40, this.height);
             ctx.fillStyle = '#228B22';
-            for (let i = 0; i < 4; i++) {
-                ctx.beginPath();
-                ctx.arc(this.x + this.width / 2, this.y + i * 25, 15, 0, Math.PI * 2);
-                ctx.fill();
-            }
+            ctx.beginPath();
+            ctx.arc(this.x + this.width / 2, this.y + 20, 30, 0, Math.PI * 2);
+            ctx.fill();
         }
     }
 }
@@ -409,7 +424,7 @@ class Particle {
     update() {
         this.x += this.vx;
         this.y += this.vy;
-        this.vy += 0.1; // gravity
+        this.vy += 0.1; 
         this.life--;
     }
 
@@ -425,21 +440,25 @@ class Particle {
     }
 }
 
-// Global functions for background drawing (since they don't need a class)
-function drawCloud(ctx, x, y) {
-    ctx.beginPath();
-    ctx.arc(x, y, 20, 0, Math.PI * 2);
-    ctx.arc(x + 25, y, 25, 0, Math.PI * 2);
-    ctx.arc(x + 50, y, 20, 0, Math.PI * 2);
-    ctx.fill();
+// Global functions for background drawing
+function drawTrees(ctx, x, y, size, count) {
+    for (let i = 0; i < count; i++) {
+        const treeX = (x + i * 200) % (ctx.canvas.width + 50);
+        ctx.fillStyle = '#8B4513';
+        ctx.fillRect(treeX + 10, y + 80, 20, 40);
+        ctx.fillStyle = '#228B22';
+        ctx.beginPath();
+        ctx.arc(treeX + 20, y + 80, 30, 0, Math.PI * 2);
+        ctx.fill();
+    }
 }
 
-function drawTree(ctx, x, y) {
-    ctx.fillStyle = '#8B4513';
-    ctx.fillRect(x + 10, y + 80, 20, 40);
-    ctx.fillStyle = '#228B22';
+function drawFoliage(ctx, x, y, size, count) {
     ctx.beginPath();
-    ctx.arc(x + 20, y + 80, 30, 0, Math.PI * 2);
+    for (let i = 0; i < count; i++) {
+        const foliageX = (x + i * 150) % (ctx.canvas.width + 50);
+        ctx.ellipse(foliageX, y, size, size * 0.5, 0, 0, Math.PI * 2);
+    }
     ctx.fill();
 }
 
