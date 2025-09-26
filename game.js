@@ -1346,30 +1346,46 @@ class Collectible {
         return canvas;
     }
     
-   drawBananaSprite(ctx, width, height) {
+  drawBananaSprite(ctx, width, height) {
         ctx.save();
-        ctx.translate(width / 2, height / 2);
 
-        // Main banana body
-        ctx.beginPath();
-        ctx.moveTo(-15, 0); // Start point of the curve
-        // Use a quadratic curve for a classic banana shape
-        ctx.quadraticCurveTo(0, 25, 20, 0); // This creates the bottom curve
-        ctx.quadraticCurveTo(5, -25, -15, 0); // This creates the top curve
-        ctx.closePath();
+        // This map of letters defines the shape of the banana.
+        // Y = Yellow, B = Brown
+        const bananaMap = [
+            "   YYYY   ",
+            "  YYYYYY  ",
+            " YYBYBYY  ",
+            " YBBYBYY  ",
+            "YBBBYBYY  ",
+            "YBBBBYYY  ",
+            " YBBBBYY  ",
+            "  YBBBY   ",
+            "   YYY    "
+        ];
 
-        // Fill with a bright yellow color
-        ctx.fillStyle = '#FFD700'; // Golden yellow
-        ctx.fill();
+        const colors = {
+            'Y': '#FFD700', // Banana Yellow
+            'B': '#A0522D'  // Brown for outline/shading
+        };
 
-        // Add a simple darker line for dimension
-        ctx.strokeStyle = '#DAA520'; // A darker yellow/gold
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        // Set the size of each "pixel"
+        const pixelSize = 4;
+        
+        // Center the drawing in the available space
+        const startX = (width - (bananaMap[0].length * pixelSize)) / 2;
+        const startY = (height - (bananaMap.length * pixelSize)) / 2;
+        ctx.translate(startX, startY);
 
-        // Add a simple stem
-        ctx.fillStyle = '#6B4423'; // Brownish stem color
-        ctx.fillRect(-20, -2, 8, 4);
+        // Loop through the map and draw a rectangle for each character
+        for (let y = 0; y < bananaMap.length; y++) {
+            for (let x = 0; x < bananaMap[y].length; x++) {
+                const pixelCharacter = bananaMap[y][x];
+                if (pixelCharacter !== ' ') {
+                    ctx.fillStyle = colors[pixelCharacter];
+                    ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+                }
+            }
+        }
 
         ctx.restore();
     }
