@@ -1346,7 +1346,7 @@ class Collectible {
         return canvas;
     }
     
-    drawBananaSprite(ctx, width, height) {
+   drawBananaSprite(ctx, width, height) {
         ctx.save();
         ctx.translate(width / 2, height / 2);
 
