@@ -1348,45 +1348,74 @@ class Collectible {
     
   drawBananaSprite(ctx, width, height) {
         ctx.save();
+        ctx.translate(width/2, height/2);
 
-        // This map of letters defines the shape of the banana.
-        // Y = Yellow, B = Brown
-        const bananaMap = [
-            "   YYYY   ",
-            "  YYYYYY  ",
-            " YYBYBYY  ",
-            " YBBYBYY  ",
-            "YBBBYBYY  ",
-            "YBBBBYYY  ",
-            " YBBBBYY  ",
-            "  YBBBY   ",
-            "   YYY    "
-        ];
+        // Glow effect
+        const glowGradient = ctx.createRadialGradient(0, 0, 10, 0, 0, 40);
+        glowGradient.addColorStop(0, 'rgba(255, 215, 0, 0.3)');
+        glowGradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
 
-        const colors = {
-            'Y': '#FFD700', // Banana Yellow
-            'B': '#A0522D'  // Brown for outline/shading
-        };
+        ctx.fillStyle = glowGradient;
+        ctx.beginPath();
+        ctx.arc(0, 0, 40, 0, Math.PI * 2);
+        ctx.fill();
 
-        // Set the size of each "pixel"
-        const pixelSize = 4;
-        
-        // Center the drawing in the available space
-        const startX = (width - (bananaMap[0].length * pixelSize)) / 2;
-        const startY = (height - (bananaMap.length * pixelSize)) / 2;
-        ctx.translate(startX, startY);
+        // Banana shape
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.moveTo(-5, -20);
+        ctx.quadraticCurveTo(-15, -15, -20, 0);
+        ctx.quadraticCurveTo(-15, 15, 0, 20);
+        ctx.quadraticCurveTo(15, 15, 20, 0);
+        ctx.quadraticCurveTo(15, -15, 5, -20);
+        ctx.closePath();
+        ctx.fill();
 
-        // Loop through the map and draw a rectangle for each character
-        for (let y = 0; y < bananaMap.length; y++) {
-            for (let x = 0; x < bananaMap[y].length; x++) {
-                const pixelCharacter = bananaMap[y][x];
-                if (pixelCharacter !== ' ') {
-                    ctx.fillStyle = colors[pixelCharacter];
-                    ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
-                }
-            }
+        // Banana curve
+        ctx.fillStyle = '#FFA500';
+        ctx.beginPath();
+        ctx.moveTo(-5, -20);
+        ctx.quadraticCurveTo(-20, -10, -15, 10);
+        ctx.quadraticCurveTo(-10, 15, 0, 15);
+        ctx.quadraticCurveTo(-5, 5, -5, -20);
+        ctx.closePath();
+        ctx.fill();
+
+        // Banana stem
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath();
+        ctx.moveTo(-3, -20);
+        ctx.lineTo(3, -20);
+        ctx.lineTo(0, -25);
+        ctx.closePath();
+        ctx.fill();
+
+        // Banana highlights
+        ctx.fillStyle = '#FFEC8B';
+        ctx.beginPath();
+        ctx.ellipse(10, 0, 8, 15, -0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Banana spots
+        ctx.fillStyle = '#FF8C00';
+        for (let i = 0; i < 5; i++) {
+            const angle = (i / 5) * Math.PI + Math.PI/2;
+            const distance = 12;
+            const x = Math.cos(angle) * distance;
+            const y = Math.sin(angle) * distance;
+            const size = 1 + Math.random() * 2;
+            
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
         }
 
+        // Banana shine
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.beginPath();
+        ctx.ellipse(5, -5, 3, 10, -0.3, 0, Math.PI * 2);
+        ctx.fill();
+        
         ctx.restore();
     }
     
