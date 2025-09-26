@@ -117,10 +117,10 @@ stopMusic() { if (this.music) { this.music.pause(); this.music.currentTime = 0; 
 class MonkeyRunnerGame {
 constructor() { this.canvas = document.getElementById('gameCanvas'); this.ctx = this.canvas.getContext('2d'); this.gameState = 'loading'; this.score = 0; this.highScore = parseInt(localStorage.getItem('monkeyRunnerHighScore')) || 0; this.gameSpeed = GAME_CONFIG.INITIAL_SPEED; this.powerLevel = 0; this.distance = 0; this.selectedCharacter = 'default'; this.monkey = null; this.obstacles = []; this.collectibles = []; this.powerUps = []; this.particles = []; this.background = { layers: [] }; this.lastObstacleSpawn = 0; this.lastCollectibleSpawn = 0; this.lastPowerUpSpawn = 0; this.spawnInterval = 2000; this.assets = new AssetManager(); this.lastTime = 0; this.loadAssets(); this.setupEventListeners(); requestAnimationFrame((t) => this.gameLoop(t)); }
 loadAssets() {
-this.assets.loadImage('background1', 'https://i.imgur.com/c5B1i6c.png?v=2');
-this.assets.loadImage('background2', 'https://i.imgur.com/4kC5bNP.png?v=2');
-this.assets.loadImage('background3', 'https://i.imgur.com/fTQ12vL.png?v=2');
-this.assets.loadImage('ground', 'https://i.imgur.com/tC0js0g.png?v=2');
+this.assets.loadImage('background1', 'https://i.imgur.com/c5B1i6c.png');
+this.assets.loadImage('background2', 'https://i.imgur.com/4kC5bNP.png');
+this.assets.loadImage('background3', 'https://i.imgur.com/fTQ12vL.png');
+this.assets.loadImage('ground', 'https://i.imgur.com/tC0js0g.png');
 this.assets.loadSound('jump', 'https://assets.codepen.io/21542/howler-push.mp3');
 this.assets.loadSound('collect', 'https://assets.codepen.io/21542/howler-sfx-levelup.mp3');
 this.assets.loadSound('crash', 'https://assets.codepen.io/21542/howler-sfx-lose.mp3');
