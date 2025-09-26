@@ -1348,74 +1348,29 @@ class Collectible {
     
     drawBananaSprite(ctx, width, height) {
         ctx.save();
-        ctx.translate(width/2, height/2);
-        
-        // Glow effect
-        const glowGradient = ctx.createRadialGradient(0, 0, 10, 0, 0, 40);
-        glowGradient.addColorStop(0, 'rgba(255, 215, 0, 0.3)');
-        glowGradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
-        
-        ctx.fillStyle = glowGradient;
+        ctx.translate(width / 2, height / 2);
+
+        // Main banana body
         ctx.beginPath();
-        ctx.arc(0, 0, 40, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Banana shape
-        ctx.fillStyle = '#FFD700';
-        ctx.beginPath();
-        ctx.moveTo(-5, -20);
-        ctx.quadraticCurveTo(-15, -15, -20, 0);
-        ctx.quadraticCurveTo(-15, 15, 0, 20);
-        ctx.quadraticCurveTo(15, 15, 20, 0);
-        ctx.quadraticCurveTo(15, -15, 5, -20);
+        ctx.moveTo(-15, 0); // Start point of the curve
+        // Use a quadratic curve for a classic banana shape
+        ctx.quadraticCurveTo(0, 25, 20, 0); // This creates the bottom curve
+        ctx.quadraticCurveTo(5, -25, -15, 0); // This creates the top curve
         ctx.closePath();
+
+        // Fill with a bright yellow color
+        ctx.fillStyle = '#FFD700'; // Golden yellow
         ctx.fill();
-        
-        // Banana curve
-        ctx.fillStyle = '#FFA500';
-        ctx.beginPath();
-        ctx.moveTo(-5, -20);
-        ctx.quadraticCurveTo(-20, -10, -15, 10);
-        ctx.quadraticCurveTo(-10, 15, 0, 15);
-        ctx.quadraticCurveTo(-5, 5, -5, -20);
-        ctx.closePath();
-        ctx.fill();
-        
-        // Banana stem
-        ctx.fillStyle = '#8B4513';
-        ctx.beginPath();
-        ctx.moveTo(-3, -20);
-        ctx.lineTo(3, -20);
-        ctx.lineTo(0, -25);
-        ctx.closePath();
-        ctx.fill();
-        
-        // Banana highlights
-        ctx.fillStyle = '#FFEC8B';
-        ctx.beginPath();
-        ctx.ellipse(10, 0, 8, 15, -0.3, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Banana spots
-        ctx.fillStyle = '#FF8C00';
-        for (let i = 0; i < 5; i++) {
-            const angle = (i / 5) * Math.PI + Math.PI/2;
-            const distance = 12;
-            const x = Math.cos(angle) * distance;
-            const y = Math.sin(angle) * distance;
-            const size = 1 + Math.random() * 2;
-            
-            ctx.beginPath();
-            ctx.arc(x, y, size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        
-        // Banana shine
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.beginPath();
-        ctx.ellipse(5, -5, 3, 10, -0.3, 0, Math.PI * 2);
-        ctx.fill();
-        
+
+        // Add a simple darker line for dimension
+        ctx.strokeStyle = '#DAA520'; // A darker yellow/gold
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Add a simple stem
+        ctx.fillStyle = '#6B4423'; // Brownish stem color
+        ctx.fillRect(-20, -2, 8, 4);
+
         ctx.restore();
     }
     
