@@ -1,4 +1,39 @@
-const GAME_CONFIG = {
+// This new object will handle loading our images
+const assets = {
+    images: {},
+    loadImages: function(onComplete) {
+        const sources = {
+            banana: 'https://i.imgur.com/2OD5y2c.png' // <-- The new pixel art banana image!
+        };
+        let imagesToLoad = Object.keys(sources).length;
+        if (imagesToLoad === 0) {
+            onComplete();
+            return;
+        }
+        for (const key in sources) {
+            if (sources.hasOwnProperty(key)) {
+                this.images[key] = new Image();
+                this.images[key].src = sources[key];
+                this.images[key].onload = () => {
+                    imagesToLoad--;
+                    if (imagesToLoad === 0) {
+                        onComplete();
+                    }
+                };
+                 this.images[key].onerror = () => {
+                    imagesToLoad--;
+                    console.error("Failed to load image: " + sources[key]);
+                    if (imagesToLoad === 0) {
+                        onComplete();
+                    }
+                };
+            }
+        }
+    },
+    getImage: function(name) {
+        return this.images[name];
+    }
+};const GAME_CONFIG = {
     GRAVITY: 0.8,
     INITIAL_SPEED: 5,
     MAX_SPEED: 15,
@@ -1315,85 +1350,41 @@ class Collectible {
         this.width = 35;
         this.height = 35;
         this.collected = false;
-        this.animationFrame = 0;
-        this.animationTimer = 0;
-        this.bobOffset = 0;
-        this.rotationSpeed = (Math.random() - 0.5) * 0.1;
-        this.rotation = Math.random() * Math.PI * 2;
-        this.scale = 1;
-        this.collectAnimation = 0;
-        this.glowIntensity = 0;
-        
-        // Create sprite
-        this.sprite = this.createSprite();
-        
-        // Particle effects
-        this.particles = [];
+        this.bobOffset = Math.random() * 10;
+        this.rotation = (Math.random() - 0.5) * 0.5;
     }
-    
-    createSprite() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = this.width * 3;
-        canvas.height = this.height * 3;
-        
+
+    update(speed) {
+        this.x -= speed;
+        this.bobOffset += 0.05;
+        this.y += Math.sin(this.bobOffset) * 0.2;
+    }
+
+    draw(ctx) {
+        if (this.collected) return;
+
+        let imageToDraw = null;
         if (this.type === 'banana') {
-            this.drawBananaSprite(ctx, canvas.width, canvas.height);
+            imageToDraw = assets.getImage('banana');
         } else if (this.type === 'coconut') {
-            this.drawCoconutSprite(ctx, canvas.width, canvas.height);
-        }
-        
-        return canvas;
-    }
-    
-  drawBananaSprite(ctx, width, height) {
-        ctx.save();
-        
-        // This map of letters defines the pixelated banana shape, inspired by your images.
-        // Each character represents a pixel, 'Y' for yellow, 'B' for brown, 'D' for dark yellow.
-        const bananaMap = [
-            "    B     ",
-            "   BYB    ",
-            "  YDBYB   ",
-            " YDDYBB   ",
-            "YDDDYBB   ",
-            "YDDDDYBB  ",
-            " YDDDDYBB ",
-            "  YDDDDBB ",
-            "   YDDDY  ",
-            "    YYY   ",
-            "          " // This extra line helps give it a bit more length
-        ];
-
-        const colors = {
-            'Y': '#FFD700', // Bright Banana Yellow
-            'D': '#DAA520', // Darker Yellow for shading/dimension
-            'B': '#8B4513'  // Brown for outline and stem
-        };
-
-        const pixelSize = 4; // Size of each individual pixel block
-        
-        // Calculate starting position to center the banana
-        const mapWidth = bananaMap[0].length * pixelSize;
-        const mapHeight = bananaMap.length * pixelSize;
-        const startX = (width - mapWidth) / 2;
-        const startY = (height - mapHeight) / 2;
-
-        ctx.translate(startX, startY); // Move canvas to the calculated starting position
-
-        // Loop through the banana map and draw each pixel
-        for (let y = 0; y < bananaMap.length; y++) {
-            for (let x = 0; x < bananaMap[y].length; x++) {
-                const pixelChar = bananaMap[y][x];
-                if (pixelChar !== ' ') { // Only draw if it's not a blank space
-                    ctx.fillStyle = colors[pixelChar];
-                    ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
-                }
-            }
+            // Placeholder drawing for the coconut
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.arc(this.x + this.width / 2, this.y + this.height / 2, 15, 0, Math.PI * 2);
+            ctx.fill();
+            return;
         }
 
-        ctx.restore();
+        // Draw the loaded image if it exists
+        if (imageToDraw && imageToDraw.complete) {
+            ctx.save();
+            ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+            ctx.rotate(this.rotation);
+            ctx.drawImage(imageToDraw, -this.width / 2, -this.height / 2, this.width, this.height);
+            ctx.restore();
+        }
     }
+}
     
     drawCoconutSprite(ctx, width, height) {
         ctx.save();
@@ -3993,5 +3984,8 @@ class Game {
 
 // Initialize game when page loads
 window.addEventListener('load', () => {
-    const game = new Game();
+    // This new part waits for the banana image to load before starting the game
+    assets.loadImages(() => {
+        const game = new Game();
+    });
 });
