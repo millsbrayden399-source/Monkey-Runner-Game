@@ -1348,74 +1348,50 @@ class Collectible {
     
   drawBananaSprite(ctx, width, height) {
         ctx.save();
-        ctx.translate(width/2, height/2);
+        
+        // This map of letters defines the pixelated banana shape, inspired by your images.
+        // Each character represents a pixel, 'Y' for yellow, 'B' for brown, 'D' for dark yellow.
+        const bananaMap = [
+            "    B     ",
+            "   BYB    ",
+            "  YDBYB   ",
+            " YDDYBB   ",
+            "YDDDYBB   ",
+            "YDDDDYBB  ",
+            " YDDDDYBB ",
+            "  YDDDDBB ",
+            "   YDDDY  ",
+            "    YYY   ",
+            "          " // This extra line helps give it a bit more length
+        ];
 
-        // Glow effect
-        const glowGradient = ctx.createRadialGradient(0, 0, 10, 0, 0, 40);
-        glowGradient.addColorStop(0, 'rgba(255, 215, 0, 0.3)');
-        glowGradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+        const colors = {
+            'Y': '#FFD700', // Bright Banana Yellow
+            'D': '#DAA520', // Darker Yellow for shading/dimension
+            'B': '#8B4513'  // Brown for outline and stem
+        };
 
-        ctx.fillStyle = glowGradient;
-        ctx.beginPath();
-        ctx.arc(0, 0, 40, 0, Math.PI * 2);
-        ctx.fill();
+        const pixelSize = 4; // Size of each individual pixel block
+        
+        // Calculate starting position to center the banana
+        const mapWidth = bananaMap[0].length * pixelSize;
+        const mapHeight = bananaMap.length * pixelSize;
+        const startX = (width - mapWidth) / 2;
+        const startY = (height - mapHeight) / 2;
 
-        // Banana shape
-        ctx.fillStyle = '#FFD700';
-        ctx.beginPath();
-        ctx.moveTo(-5, -20);
-        ctx.quadraticCurveTo(-15, -15, -20, 0);
-        ctx.quadraticCurveTo(-15, 15, 0, 20);
-        ctx.quadraticCurveTo(15, 15, 20, 0);
-        ctx.quadraticCurveTo(15, -15, 5, -20);
-        ctx.closePath();
-        ctx.fill();
+        ctx.translate(startX, startY); // Move canvas to the calculated starting position
 
-        // Banana curve
-        ctx.fillStyle = '#FFA500';
-        ctx.beginPath();
-        ctx.moveTo(-5, -20);
-        ctx.quadraticCurveTo(-20, -10, -15, 10);
-        ctx.quadraticCurveTo(-10, 15, 0, 15);
-        ctx.quadraticCurveTo(-5, 5, -5, -20);
-        ctx.closePath();
-        ctx.fill();
-
-        // Banana stem
-        ctx.fillStyle = '#8B4513';
-        ctx.beginPath();
-        ctx.moveTo(-3, -20);
-        ctx.lineTo(3, -20);
-        ctx.lineTo(0, -25);
-        ctx.closePath();
-        ctx.fill();
-
-        // Banana highlights
-        ctx.fillStyle = '#FFEC8B';
-        ctx.beginPath();
-        ctx.ellipse(10, 0, 8, 15, -0.3, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Banana spots
-        ctx.fillStyle = '#FF8C00';
-        for (let i = 0; i < 5; i++) {
-            const angle = (i / 5) * Math.PI + Math.PI/2;
-            const distance = 12;
-            const x = Math.cos(angle) * distance;
-            const y = Math.sin(angle) * distance;
-            const size = 1 + Math.random() * 2;
-            
-            ctx.beginPath();
-            ctx.arc(x, y, size, 0, Math.PI * 2);
-            ctx.fill();
+        // Loop through the banana map and draw each pixel
+        for (let y = 0; y < bananaMap.length; y++) {
+            for (let x = 0; x < bananaMap[y].length; x++) {
+                const pixelChar = bananaMap[y][x];
+                if (pixelChar !== ' ') { // Only draw if it's not a blank space
+                    ctx.fillStyle = colors[pixelChar];
+                    ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+                }
+            }
         }
 
-        // Banana shine
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.beginPath();
-        ctx.ellipse(5, -5, 3, 10, -0.3, 0, Math.PI * 2);
-        ctx.fill();
-        
         ctx.restore();
     }
     
